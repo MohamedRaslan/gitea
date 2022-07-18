@@ -1,0 +1,43 @@
+version: 0.2
+
+run-as: ubuntu
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14.20
+      golang: 1.18
+
+    commands:
+      - echo Entered the install phase...
+      - sudo apt update && sudo apt upgrade -y
+      - sudo apt install build-essential -y
+      - npm install -y npm@latest
+
+    finally:
+      - echo This always runs even if the update or install command fails
+      - go version
+      - node -v
+      - npm -v
+
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+    finally:
+      - echo This always runs even if the login command fails
+
+  build:
+    commands:
+      - echo Entered the build phase...
+      - TAGS="bindata" make build
+    finally:
+      - echo This always runs even if the install command fails
+
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes
